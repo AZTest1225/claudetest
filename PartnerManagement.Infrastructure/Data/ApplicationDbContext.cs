@@ -19,38 +19,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         base.OnModelCreating(builder);
 
-        // Apply configurations from assembly
+        // Apply all entity configurations from the assembly
+        // This will automatically apply all IEntityTypeConfiguration<T> classes
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-
-        // Configure EventPartner unique constraint
-        builder.Entity<EventPartner>()
-            .HasIndex(ep => new { ep.EventId, ep.PartnerId })
-            .IsUnique();
-
-        // Configure relationships
-        builder.Entity<EventPartner>()
-            .HasOne(ep => ep.Event)
-            .WithMany(e => e.EventPartners)
-            .HasForeignKey(ep => ep.EventId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Entity<EventPartner>()
-            .HasOne(ep => ep.Partner)
-            .WithMany(p => p.EventPartners)
-            .HasForeignKey(ep => ep.PartnerId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        // Configure indexes
-        builder.Entity<Partner>()
-            .HasIndex(p => p.Name);
-
-        builder.Entity<Partner>()
-            .HasIndex(p => p.Status);
-
-        builder.Entity<Event>()
-            .HasIndex(e => e.StartDate);
-
-        builder.Entity<Event>()
-            .HasIndex(e => e.Status);
     }
 }
